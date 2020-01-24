@@ -3,6 +3,12 @@
            https://api.github.com/users/<your name>
 */
 
+const axiosPromise = axios.get('https://api.github.com/users/jamcoding');
+console.log(axiosPromise);
+
+const entryPoint = document.querySelector('.cards');
+console.log('entry', entryPoint);
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -14,6 +20,28 @@
            create a new component and add it to the DOM as a child of .cards
 */
 
+axiosPromise.then(response => {
+  console.log('res', response);
+  console.log('res.data.avatar_url', response.data.avatar_url);
+  console.log('res.data.name', response.data.name);
+  console.log('res.data.login', response.data.login);
+  console.log('res.data.location', response.data.location);
+  console.log('res.data.html_url', response.data.html_url);
+  console.log('res.data.html_url', response.data.html_url);
+  console.log('res.data.followers', response.data.followers);
+  console.log('res.data.following', response.data.following);
+  console.log('res.data.bio', response.data.bio);
+
+  let myInfo = createCard(response.data);
+
+  entryPoint.appendChild(myInfo);
+
+  })
+
+  .catch(error => {
+    console.log('ERROR', error);
+  })
+
 /* Step 5: Now that you have your own card getting added to the DOM, either 
           follow this link in your browser https://api.github.com/users/<Your github name>/followers 
           , manually find some other users' github handles, or use the list found 
@@ -24,7 +52,43 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell'];
+
+followersArray.forEach(person => {
+    axios.get('https://api.github.com/users/' + person).then(response => {
+      const followerCard = createCard(response.data)
+      entryPoint.appendChild(followerCard);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  })
+
+// const followersPromise = axios.get('https://api.github.com/users/jamcoding/followers');
+
+// followersArray.then(response => {
+//   console.log('response', response);
+//   console.log('response.data.avatar_url', response.data.avatar_url);
+//   console.log('response.data.name', response.data.name);
+//   console.log('response.data.login', response.data.login);
+//   console.log('response.data.location', response.data.location);
+//   console.log('response.data.html_url', response.data.html_url);
+//   console.log('response.data.html_url', response.data.html_url);
+//   console.log('response.data.followers', response.data.followers);
+//   console.log('response.data.following', response.data.following);
+//   console.log('response.data.bio', response.data.bio);
+
+  // response.data.forEach(followers => {
+  //   const newCard = createCard(followers);
+
+  //   entryPoint.appendChild(newCard);
+  // })
+// })
+
+// .catch(error => {
+//   console.log('error', error);
+// })
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -45,6 +109,50 @@ const followersArray = [];
 </div>
 
 */
+
+const createCard = (data) => {
+
+  const card = document.createElement('div');
+  const userImage = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const h3 = document.createElement('h3');
+  const username = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const profileLink = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  userImage.src = data.avatar_url;
+  h3.textContent = data.name;
+  username.textContent = data.login;
+  location.textContent = `Location: ${data.location}`;
+  profile.textContent = `Profile: ${data.html_url}`;
+  profileLink.href = data.html_url;
+  followers.textContent = `Followers: ${data.followers}`;
+  following.textContent = `Following: ${data.following}`;
+  bio.textContent = `Bio: ${data.bio}`;
+
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  h3.classList.add('name');
+  username.classList.add('username');
+
+  card.appendChild(userImage);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(h3);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  profile.appendChild(profileLink);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);  
+
+  return card;
+  
+}
 
 /* List of LS Instructors Github username's: 
   tetondan
